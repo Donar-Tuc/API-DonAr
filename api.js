@@ -1,14 +1,14 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { dbConnect } = require("./config/mongo");
-const { handleError } = require("./app/middleware/handleError");
+const { dbConnect } = require("./src/config/mongo");
+const { handleError } = require("./src/app/middleware/handleError");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/", require("./app/routes"));
+app.use("/", require("./src/app/routes"));
 app.use(handleError);
 
 dbConnect();
