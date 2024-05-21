@@ -11,6 +11,9 @@ app.use(express.json());
 app.use("/", require("./src/app/routes"));
 app.use(handleError);
 
-dbConnect();
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log("Servidor escuchando en el puerto " + PORT));
+
+app.listen(PORT, () => {
+    dbConnect();
+    console.log("Servidor escuchando en el puerto " + PORT);
+});
