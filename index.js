@@ -13,9 +13,24 @@ app.use(handleError);
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
-    dbConnect();
-    console.log("Servidor escuchando en el puerto " + PORT);
-});
+async function startServer() {
+    try {
+        await dbConnect();
+        console.log("**** CONEXION ESTABLECIDA ****");
+
+        const server = app.listen(PORT, () => {
+            console.log("Servidor escuchando en el puerto " + PORT);
+        });
+
+        server.timeout = 30000; // Aumenta el tiempo de espera a 30 segundos
+    } catch (error) {
+        console.error("Error al conectar a la base de datos:", error);
+        process.exit(1);
+    }
+}
+
+if (process.env.NODE_ENV !== 'production') {
+    startServer();
+}
 
 module.exports = app;
