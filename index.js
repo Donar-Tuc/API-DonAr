@@ -17,3 +17,5 @@ app.listen(PORT, () => {
     dbConnect();
     console.log("Servidor escuchando en el puerto " + PORT);
 });
+
+module.exports = app;
