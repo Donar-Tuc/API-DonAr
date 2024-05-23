@@ -13,8 +13,8 @@ app.use(handleError);
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
-    dbConnect();
+app.listen(PORT, async () => {
+    await dbConnect();
     console.log("Servidor escuchando en el puerto " + PORT);
 });
 
