@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
+const DB_URI = process.env.DB_URI;
 
-const dbConnect = () => 
-{
 
-    const DB_URI = process.env.DB_URI;
-    mongoose.connect(DB_URI);
-
-    mongoose.connection.on("connected", () => console.log("**** CONEXION ESTABLECIDA ****"));
-    mongoose.connection.on("error", (err) => console.log("**** ERROR DE CONEXION ****", err));
-}
+async function dbConnect() {
+    try {
+      await mongoose.connect(DB_URI, {});
+      console.log('Conexión a la base de datos exitosa');
+    } catch (error) {
+      console.error('Error al conectar a la base de datos', error);
+    }
+  }
 
 module.exports = { dbConnect };
