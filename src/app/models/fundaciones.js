@@ -10,8 +10,13 @@ const fundacionesSchema = new mongoose.Schema({
     informacionPago: String,
     email: {
         type: String,
-        unique: true // Este campo debe ser único
-    }
+        unique: true, // Este campo debe ser único
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
 },
 {
     timestamps: true,
