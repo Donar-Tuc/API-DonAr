@@ -38,7 +38,8 @@ const createFundacion = async (req, res, next) => {
             logo, 
             necesidadesActuales,
             informacionPago,
-            email
+            email,
+            password
         } = req.body; 
 
         const createOne = await fundacionModel.create({ 
