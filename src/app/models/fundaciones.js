@@ -13,10 +13,10 @@ const fundacionesSchema = new mongoose.Schema({
         unique: true, // Este campo debe ser único
         required: true
     },
-    password: {
-        type: String,
-        required: true
-    },
+    //password: {
+    //    type: String,
+    //    required: true
+    //},
 },
 {
     timestamps: true,
