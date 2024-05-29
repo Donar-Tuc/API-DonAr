@@ -39,7 +39,7 @@ const createFundacion = async (req, res, next) => {
             necesidadesActuales,
             informacionPago,
             email,
-            password
+            //password
         } = req.body; 
 
         const createOne = await fundacionModel.create({ 
