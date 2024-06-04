@@ -5,7 +5,7 @@ const { authUser } = require("../middleware/authUser");
 
 router.get("/", getFundaciones);
 
-router.get("/:id", authUser, getFundacion);
+router.get("/:id", getFundacion);
 
 router.post("/", authUser, createFundacion);
 
