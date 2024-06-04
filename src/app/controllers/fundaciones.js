@@ -31,26 +31,32 @@ const createFundacion = async (req, res, next) => {
     {
         const 
         { 
-            nombre, 
-            descripcion, 
-            direccion, 
-            contacto, 
-            logo, 
-            necesidadesActuales,
-            informacionPago,
+            logo,
+            titulo,
+            horario,
+            direccion,
+            telefono,
+            sitioWeb,
+            mapaBoton,
             email,
+            mapa,
+            descripcion,
+            tituloEtiquetas
             //password
         } = req.body; 
 
         const createOne = await fundacionModel.create({ 
-            nombre, 
-            descripcion, 
-            direccion, 
-            contacto, 
-            logo, 
-            necesidadesActuales,
-            informacionPago,
-            email
+            logo,
+            titulo,
+            horario,
+            direccion,
+            telefono,
+            sitioWeb,
+            mapaBoton,
+            email,
+            mapa,
+            descripcion,
+            tituloEtiquetas
         });
 
         res.send({ created: createOne });
@@ -70,25 +76,31 @@ const updateFundacion = async (req, res, next) => {
         console.log("Update by id: ", id);
         const 
         { 
-            nombre, 
-            descripcion, 
-            direccion, 
-            contacto, 
-            logo, 
-            necesidadesActuales,
-            informacionPago,
-            email
+            logo,
+            titulo,
+            horario,
+            direccion,
+            telefono,
+            sitioWeb,
+            mapaBoton,
+            email,
+            mapa,
+            descripcion,
+            tituloEtiquetas
         } = req.body; 
 
         const updateOne = await fundacionModel.findByIdAndUpdate(id, { 
-            nombre, 
-            descripcion, 
-            direccion, 
-            contacto, 
-            logo, 
-            necesidadesActuales,
-            informacionPago,
-            email
+            logo,
+            titulo,
+            horario,
+            direccion,
+            telefono,
+            sitioWeb,
+            mapaBoton,
+            email,
+            mapa,
+            descripcion,
+            tituloEtiquetas
         }, { new: true });
 
         res.send({ updated: updateOne });
