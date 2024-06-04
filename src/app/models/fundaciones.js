@@ -15,7 +15,7 @@ const fundacionesSchema = new mongoose.Schema({
     },
     mapa: String,
     descripcion: String,
-    tituloEtiqutas: [String],
+    tituloEtiquetas: [String],
     //password: {
     //    type: String,
     //    required: true
