@@ -1,18 +1,21 @@
 const mongoose = require("mongoose");
 
 const fundacionesSchema = new mongoose.Schema({
-    nombre: String,
-    descripcion: String,
-    direccion: String,
-    contacto: String,
     logo: String,
-    necesidadesActuales: [String],
-    informacionPago: String,
+    titulo: String,
+    horario: String,
+    direccion: String,
+    telefono: String,
+    sitioWeb: String,
+    mapaBoton: String,
     email: {
         type: String,
         unique: true, // Este campo debe ser único
         required: true
     },
+    mapa: String,
+    descripcion: String,
+    tituloEtiqutas: [String],
     //password: {
     //    type: String,
     //    required: true
