@@ -12,7 +12,7 @@ const getFundaciones = async (req, res, next) => {
     }
 }
 
-const getFundacionesPorEtiquetas = async (req, res, next) => {
+const getFundacionesPorEtiqueta = async (req, res, next) => {
     try {
         const necesidades = req.query.necesidades; // Suponiendo que las necesidades se pasen como parámetro de consulta en la URL
         // const necesidades = req.params.necesidades; // alternativa
@@ -141,5 +141,5 @@ const deleteFundacion = async (req, res, next) => {
     
 }
 
-module.exports = { getFundaciones, getFundacionesPorEtiquetas, getFundacion, createFundacion, updateFundacion, deleteFundacion }
+module.exports = { getFundaciones, getFundacionesPorEtiqueta, getFundacion, createFundacion, updateFundacion, deleteFundacion }
 
