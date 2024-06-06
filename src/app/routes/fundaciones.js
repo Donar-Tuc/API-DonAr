@@ -1,11 +1,11 @@
 const express  = require("express");
 const router = express.Router();
-const { getFundaciones, getFundacionesPorEtiquetas, getFundacion, createFundacion, updateFundacion, deleteFundacion } = require("../controllers/fundaciones");
+const { getFundaciones, getFundacionesPorEtiqueta, getFundacion, createFundacion, updateFundacion, deleteFundacion } = require("../controllers/fundaciones");
 const { authUser } = require("../middleware/authUser");
 
 router.get("/", getFundaciones);
 
-router.get("/:etiqueta", getFundacionesPorEtiquetas);
+router.get("/etiqueta", getFundacionesPorEtiqueta);
 
 router.get("/:id", getFundacion);
 
