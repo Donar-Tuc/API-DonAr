@@ -17,11 +17,11 @@ const getFundacionesPorEtiqueta = async (req, res, next) => {
         const necesidades = req.query.necesidades; // Suponiendo que las necesidades se pasen como parámetro de consulta en la URL
         // const necesidades = req.params.necesidades; // alternativa
         const fundaciones = await fundacionModel.find({
-            necesidadesActuales: { $in: necesidades }
+            tituloEtiquetas: { $in: necesidades }
         });
         res.send({ list: fundaciones });
     } catch (error) {
-        next(new Error("Error al obtener las fundaciones por necesidades: " + error.message));
+        next(new Error("Error al obtener las fundaciones por etiquetas: " + error.message));
     }
 }
 
