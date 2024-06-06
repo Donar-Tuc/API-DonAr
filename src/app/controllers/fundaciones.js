@@ -12,6 +12,19 @@ const getFundaciones = async (req, res, next) => {
     }
 }
 
+const getFundacionesPorEtiquetas = async (req, res, next) => {
+    try {
+        const necesidades = req.query.necesidades; // Suponiendo que las necesidades se pasen como parámetro de consulta en la URL
+        // const necesidades = req.params.necesidades; // alternativa
+        const fundaciones = await fundacionModel.find({
+            necesidadesActuales: { $in: necesidades }
+        });
+        res.send({ list: fundaciones });
+    } catch (error) {
+        next(new Error("Error al obtener las fundaciones por necesidades: " + error.message));
+    }
+}
+
 const getFundacion = async (req, res, next) => {
     try 
     {
@@ -128,5 +141,5 @@ const deleteFundacion = async (req, res, next) => {
     
 }
 
-module.exports = { getFundaciones, getFundacion, createFundacion, updateFundacion, deleteFundacion }
+module.exports = { getFundaciones, getFundacionesPorEtiquetas, getFundacion, createFundacion, updateFundacion, deleteFundacion }
 
