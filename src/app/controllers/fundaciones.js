@@ -14,14 +14,14 @@ const getFundaciones = async (req, res, next) => {
 
 const getFundacionesPorEtiqueta = async (req, res, next) => {
     try {
-        const necesidades = req.query.necesidades; // Suponiendo que las necesidades se pasen como parámetro de consulta en la URL
-        // const necesidades = req.params.necesidades; // alternativa
+        const etiqueta = req.query.etiqueta;
+        
         const fundaciones = await fundacionModel.find({
-            tituloEtiquetas: { $in: necesidades }
+            tituloEtiquetas: { $in: etiqueta }
         });
         res.send({ list: fundaciones });
     } catch (error) {
-        next(new Error("Error al obtener las fundaciones por etiquetas: " + error.message));
+        next(new Error("Error al obtener las fundaciones por etiqueta: " + error.message));
     }
 }
 
