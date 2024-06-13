@@ -42,9 +42,9 @@ const getFundacion = async (req, res, next) => {
 const createFundacion = async (req, res, next) => {
     try 
     {
+        let logo;
         const 
         { 
-            logo,
             titulo,
             horario,
             direccion,
@@ -57,6 +57,9 @@ const createFundacion = async (req, res, next) => {
             tituloEtiquetas
             //password
         } = req.body; 
+        if (req.file) {
+            logo = req.file.path;
+        }
 
         const createOne = await fundacionModel.create({ 
             logo,
@@ -87,9 +90,9 @@ const updateFundacion = async (req, res, next) => {
     {
         const id = req.params.id;
         console.log("Update by id: ", id);
+        let logo;
         const 
         { 
-            logo,
             titulo,
             horario,
             direccion,
@@ -101,7 +104,9 @@ const updateFundacion = async (req, res, next) => {
             descripcion,
             tituloEtiquetas
         } = req.body; 
-
+        if (req.file) {
+            logo = req.file.path;
+        }
         const updateOne = await fundacionModel.findByIdAndUpdate(id, { 
             logo,
             titulo,
