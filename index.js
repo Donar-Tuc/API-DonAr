@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/", require("./src/app/routes"));
-app.use("/uploads", express.static("uploads"));
+app.use('/uploads', express.static(os.tmpdir()));
 app.use(handleError);
 
 const PORT = process.env.PORT || 3001;
