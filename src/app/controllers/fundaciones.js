@@ -1,13 +1,11 @@
 const fundacionModel = require("../models/fundaciones");
 
 const getFundaciones = async (req, res, next) => {
-    try 
-    {
+    try {
         const listAll = await fundacionModel.find({})
         res.send({ list: listAll });
-    }    
-    catch (error) 
-    {
+    }
+    catch (error) {
         next(error);
     }
 }
@@ -15,7 +13,7 @@ const getFundaciones = async (req, res, next) => {
 const getFundacionesPorEtiqueta = async (req, res, next) => {
     try {
         const etiqueta = req.query.etiqueta;
-        
+
         const fundaciones = await fundacionModel.find({
             tituloEtiquetas: { $in: etiqueta }
         });
@@ -26,42 +24,39 @@ const getFundacionesPorEtiqueta = async (req, res, next) => {
 }
 
 const getFundacion = async (req, res, next) => {
-    try 
-    {
+    try {
         const id = req.params.id;
         console.log("Find by id: ", id);
         const findOne = await fundacionModel.findById(id);
         res.send({ document: findOne });
-    } 
-    catch (error) 
-    {
+    }
+    catch (error) {
         next(error);
     }
 }
 
 const createFundacion = async (req, res, next) => {
-    try 
-    {
+    try {
         let logo;
-        const 
-        { 
-            titulo,
-            horario,
-            direccion,
-            telefono,
-            sitioWeb,
-            mapaBoton,
-            email,
-            mapa,
-            descripcion,
-            tituloEtiquetas
-            //password
-        } = req.body; 
+        const
+            {
+                titulo,
+                horario,
+                direccion,
+                telefono,
+                sitioWeb,
+                mapaBoton,
+                email,
+                mapa,
+                descripcion,
+                tituloEtiquetas
+                //password
+            } = req.body;
         if (req.file) {
-            logo = req.file.path;
+            logo = `/uploads/${req.file.filename}`
         }
 
-        const createOne = await fundacionModel.create({ 
+        const createOne = await fundacionModel.create({
             logo,
             titulo,
             horario,
@@ -76,38 +71,36 @@ const createFundacion = async (req, res, next) => {
         });
 
         res.send({ created: createOne });
-        
-    }     
-    catch (error) 
-    {
+
+    }
+    catch (error) {
         next(error);
     }
 }
 
 
 const updateFundacion = async (req, res, next) => {
-    try 
-    {
+    try {
         const id = req.params.id;
         console.log("Update by id: ", id);
         let logo;
-        const 
-        { 
-            titulo,
-            horario,
-            direccion,
-            telefono,
-            sitioWeb,
-            mapaBoton,
-            email,
-            mapa,
-            descripcion,
-            tituloEtiquetas
-        } = req.body; 
+        const
+            {
+                titulo,
+                horario,
+                direccion,
+                telefono,
+                sitioWeb,
+                mapaBoton,
+                email,
+                mapa,
+                descripcion,
+                tituloEtiquetas
+            } = req.body;
         if (req.file) {
-            logo = req.file.path;
+            logo = `/uploads/${req.file.filename}`
         }
-        const updateOne = await fundacionModel.findByIdAndUpdate(id, { 
+        const updateOne = await fundacionModel.findByIdAndUpdate(id, {
             logo,
             titulo,
             horario,
@@ -123,9 +116,8 @@ const updateFundacion = async (req, res, next) => {
 
         res.send({ updated: updateOne });
 
-    }     
-    catch (error) 
-    {
+    }
+    catch (error) {
         next(error);
     }
 }
@@ -137,13 +129,12 @@ const deleteFundacion = async (req, res, next) => {
         console.log("Delete by id: ", id);
         const deleteOne = await fundacionModel.findByIdAndDelete(id);
         res.send({ deleted: deleteOne });
-        
-    }    
-    catch (error) 
-    {
+
+    }
+    catch (error) {
         next(error);
     }
-    
+
 }
 
 module.exports = { getFundaciones, getFundacionesPorEtiqueta, getFundacion, createFundacion, updateFundacion, deleteFundacion }
