@@ -37,27 +37,26 @@ const getFundacion = async (req, res, next) => {
 
 const createFundacion = async (req, res, next) => {
     try {
-        let logo;
-        const
-            {
-                titulo,
-                horario,
-                direccion,
-                telefono,
-                sitioWeb,
-                mapaBoton,
-                email,
-                mapa,
-                descripcion,
-                tituloEtiquetas
-                //password
-            } = req.body;
+        let logoUrl;
+        const {
+            titulo,
+            horario,
+            direccion,
+            telefono,
+            sitioWeb,
+            mapaBoton,
+            email,
+            mapa,
+            descripcion,
+            tituloEtiquetas
+        } = req.body;
+
         if (req.file) {
-            logo = `/uploads/${req.file.filename}`
+            logoUrl = `/upload/file/${req.file.id}`;
         }
 
         const createOne = await fundacionModel.create({
-            logo,
+            logo: logoUrl,
             titulo,
             horario,
             direccion,
@@ -72,36 +71,34 @@ const createFundacion = async (req, res, next) => {
 
         res.send({ created: createOne });
 
-    }
-    catch (error) {
+    } catch (error) {
         next(error);
     }
 }
 
-
 const updateFundacion = async (req, res, next) => {
     try {
         const id = req.params.id;
-        console.log("Update by id: ", id);
-        let logo;
-        const
-            {
-                titulo,
-                horario,
-                direccion,
-                telefono,
-                sitioWeb,
-                mapaBoton,
-                email,
-                mapa,
-                descripcion,
-                tituloEtiquetas
-            } = req.body;
+        let logoUrl;
+        const {
+            titulo,
+            horario,
+            direccion,
+            telefono,
+            sitioWeb,
+            mapaBoton,
+            email,
+            mapa,
+            descripcion,
+            tituloEtiquetas
+        } = req.body;
+
         if (req.file) {
-            logo = `/uploads/${req.file.filename}`
+            logoUrl = `/upload/file/${req.file.id}`;
         }
+
         const updateOne = await fundacionModel.findByIdAndUpdate(id, {
-            logo,
+            logo: logoUrl,
             titulo,
             horario,
             direccion,
@@ -116,11 +113,11 @@ const updateFundacion = async (req, res, next) => {
 
         res.send({ updated: updateOne });
 
-    }
-    catch (error) {
+    } catch (error) {
         next(error);
     }
 }
+
 
 
 const deleteFundacion = async (req, res, next) => {
