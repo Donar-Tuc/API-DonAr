@@ -1,23 +1,20 @@
 const mongoose = require('mongoose');
 const { GridFSBucket, ObjectId } = require('mongodb');
 
-const getFileFromGridFS = (req, res, next) => {
-    console.log('Iniciando getFileFromGridFS');
-    
-    const db = mongoose.connection.db;
-    console.log('Conexión a la base de datos establecida');
+const getFileFromGridFS = async (req, res, next) => {
+    try {
+        console.log('Iniciando getFileFromGridFS');
 
-    const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
-    console.log('Bucket de GridFS creado');
+        const db = mongoose.connection.db;
+        console.log('Conexión a la base de datos establecida');
 
-    const fileId = ObjectId(req.params.id);
-    console.log('ID del archivo:', fileId);
+        const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
+        console.log('Bucket de GridFS creado');
 
-    bucket.find({ _id: fileId }).toArray((err, files) => {
-        if (err) {
-            console.error('Error al buscar archivos en GridFS:', err);
-            return next(err);
-        }
+        const fileId = new ObjectId(req.params.id);
+        console.log('ID del archivo:', fileId);
+
+        const files = await bucket.find({ _id: fileId }).toArray();
 
         if (!files || files.length === 0) {
             console.log('Archivo no encontrado en GridFS');
@@ -42,7 +39,11 @@ const getFileFromGridFS = (req, res, next) => {
         });
 
         downloadStream.pipe(res);
-    });
+
+    } catch (error) {
+        console.error('Error en getFileFromGridFS:', error);
+        next(error);
+    }
 };
 
 module.exports = { getFileFromGridFS };
