@@ -15,7 +15,11 @@ async function dbConnect() {
 
     try {
         console.log("Intentando conectar a la base de datos...");
-        const connection = await mongoose.connect(DB_URI);
+        const connection = await mongoose.connect(DB_URI, 
+            {  
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
         console.log("Conexión a la base de datos exitosa");
         cachedDb = connection;
         return connection;
