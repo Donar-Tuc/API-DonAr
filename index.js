@@ -51,7 +51,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/', require('./src/app/routes'));
-app.use('/uploads', express.static('uploads')); // Ajusta la ruta según donde deseas servir los archivos estáticos
+app.use('/upload/file/:id', express.static('uploads/logosFundaciones')); // Ajusta la ruta según donde deseas servir los archivos estáticos
+
 app.use(handleError);
 
 const PORT = process.env.PORT || 3001;
