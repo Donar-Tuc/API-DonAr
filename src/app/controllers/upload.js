@@ -23,8 +23,8 @@ const getFileFromGridFS = async (req, res, next) => {
 
         console.log('Archivo encontrado en GridFS:', files[0]);
 
-        res.set('Content-Type', files[0].contentType);
-        res.set('Content-Disposition', `attachment; filename="${files[0].filename}"`);
+        res.set('Content-Type', files[0].contentType); // Asegúrate de que el Content-Type sea el correcto
+        res.set('Content-Disposition', `inline; filename="${files[0].filename}"`); // Cambiado a 'inline' para mostrar en navegador
 
         const downloadStream = bucket.openDownloadStream(fileId);
 
