@@ -19,8 +19,6 @@ async function dbConnect() {
             {  
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
-                useCreateIndex: true,
-                useFindAndModify: false
         });
         console.log("Conexión a la base de datos exitosa");
         cachedDb = connection;
