@@ -2,13 +2,9 @@ const mongoose = require('mongoose');
 const { GridFSBucket, ObjectId } = require('mongodb');
 
 const getFileFromGridFS = async (req, res, next) => {
+
     try {
         console.log('Iniciando getFileFromGridFS');
-
-        // Verificar si la conexión a la base de datos está establecida
-        if (!mongoose.connection.db) {
-            throw new Error('No se pudo establecer la conexión a la base de datos');
-        }
 
         const db = mongoose.connection.db;
         console.log('Conexión a la base de datos establecida');
