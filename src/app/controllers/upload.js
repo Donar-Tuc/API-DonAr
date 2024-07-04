@@ -12,7 +12,6 @@ const getFileFromGridFS = async (req, res, next) => {
             throw new Error('No se pudo establecer la conexión a la base de datos');
         }
 
-
         console.log('Conexión a la base de datos establecida');
 
         const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
@@ -37,21 +36,26 @@ const getFileFromGridFS = async (req, res, next) => {
 
         downloadStream.on('error', (error) => {
             console.error('Error al abrir flujo de descarga:', error);
-            res.status(500).send({ error: 'Error al abrir flujo de descarga' });
-            next(error);
+            if (!res.headersSent) {
+                return res.status(500).send({ error: 'Error al abrir flujo de descarga' });
+            }
         });
 
         downloadStream.on('end', () => {
             console.log('Descarga del archivo completada');
-            res.end();
+            if (!res.headersSent) {
+                res.end();
+            }
         });
 
         downloadStream.pipe(res);
 
     } catch (error) {
         console.error('Error en getFileFromGridFS:', error);
-        res.status(500).send({ error: 'Error en getFileFromGridFS' });
-        next(error);
+        if (!res.headersSent) {
+            return res.status(500).send({ error: 'Error en getFileFromGridFS' });
+        }
+        next(error); // Solo llamar a next si no se ha enviado una respuesta
     }
 };
 
