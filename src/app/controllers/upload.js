@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+const { GridFSBucket, ObjectId } = require('mongodb');
 
 const getFileFromGridFS = async (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*'); // Allow all origins
@@ -55,4 +56,5 @@ const getFileFromGridFS = async (req, res, next) => {
     }
 };
 
-module.exports = {getFileFromGridFS}
+
+module.exports = { getFileFromGridFS };
