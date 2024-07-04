@@ -5,12 +5,14 @@ const getFileFromGridFS = async (req, res, next) => {
     try {
         console.log('Iniciando getFileFromGridFS');
 
+        const db = mongoose.connection.db;
+        
         // Verificar si la conexión a la base de datos está establecida
-        if (!mongoose.connection.db) {
+        if (!db) {
             throw new Error('No se pudo establecer la conexión a la base de datos');
         }
 
-        const db = mongoose.connection.db;
+
         console.log('Conexión a la base de datos establecida');
 
         const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
