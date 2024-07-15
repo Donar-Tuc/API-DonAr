@@ -57,9 +57,8 @@ const uploadFileToGridFS = (req, res, next) => {
     const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
 
     if (!req.file) {
-        return res.status(400).send('No file uploaded');
+        return next()
     }
-
     const uploadStream = bucket.openUploadStream(`${Date.now()}${path.extname(req.file.originalname)}`);
     uploadStream.end(req.file.buffer);
     uploadStream.on('finish', () => {

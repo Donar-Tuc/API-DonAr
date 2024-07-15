@@ -1,4 +1,6 @@
 const fundacionModel = require("../models/fundaciones");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const getFundaciones = async (req, res, next) => {
     try {
@@ -35,62 +37,30 @@ const getFundacion = async (req, res, next) => {
     }
 }
 
-const createFundacion = async (req, res, next) => {
-    try {
-        let logoUrl;
-        const {
-            titulo,
-            horario,
-            direccion,
-            telefono,
-            sitioWeb,
-            mapaBoton,
-            email,
-            mapa,
-            descripcion,
-            tituloEtiquetas
-        } = req.body;
-
-        if (req.file) {
-            logoUrl = `/upload/file/${req.file.id}`;
-        }
-
-        const createOne = await fundacionModel.create({
-            logo: logoUrl,
-            titulo,
-            horario,
-            direccion,
-            telefono,
-            sitioWeb,
-            mapaBoton,
-            email,
-            mapa,
-            descripcion,
-            tituloEtiquetas
-        });
-
-        res.send({ created: createOne });
-
-    } catch (error) {
-        next(error);
-    }
-}
-
 const updateFundacion = async (req, res, next) => {
     try {
         const id = req.params.id;
+        const userId = req.user.userId;
+
+        if(id != userId) {
+            return res.status(400).send({ message: "User credentials don't match" });
+        }
+
+
         let logoUrl;
         const {
+            userName,
+            email,
+            password,
             titulo,
             horario,
             direccion,
             telefono,
             sitioWeb,
             mapaBoton,
-            email,
             mapa,
             descripcion,
-            tituloEtiquetas
+            tituloEtiquetas,
         } = req.body;
 
         if (req.file) {
@@ -98,6 +68,9 @@ const updateFundacion = async (req, res, next) => {
         }
 
         const updateOne = await fundacionModel.findByIdAndUpdate(id, {
+            userName,
+            email,
+            password,
             logo: logoUrl,
             titulo,
             horario,
@@ -105,7 +78,6 @@ const updateFundacion = async (req, res, next) => {
             telefono,
             sitioWeb,
             mapaBoton,
-            email,
             mapa,
             descripcion,
             tituloEtiquetas
@@ -134,5 +106,78 @@ const deleteFundacion = async (req, res, next) => {
 
 }
 
-module.exports = { getFundaciones, getFundacionesPorEtiqueta, getFundacion, createFundacion, updateFundacion, deleteFundacion }
+const loginFundacion = async (req, res, next) => {
+    try 
+    {
+        const { email, password } = req.body;
+
+        if(!email || !password)
+        {
+            res.status(400).send({ message: "Please provide email and password to proceed." });
+        }
+
+        const user = await fundacionModel.findOne({ email: email });
+        const passwordMatch = await bcrypt.compare(password, user.password)
+
+        if(!user || !passwordMatch)
+        {
+            res.status(400).send({ message: "Please provide valid credentials." });
+        }
+
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_PASSWORD, { expiresIn: "1h" });
+
+        res.send({ token: token });
+    } 
+    catch (error) 
+    {
+        next(error);
+    }
+};
+
+const registerFundacion = async (req, res, next) => {
+    try {
+        let logoUrl;
+        const {
+            userName,
+            email,
+            password,
+            titulo,
+            horario,
+            direccion,
+            telefono,
+            sitioWeb,
+            mapaBoton,
+            mapa,
+            descripcion,
+            tituloEtiquetas,
+        } = req.body;
+
+        if (req.file) {
+            logoUrl = `/upload/file/${req.file.id}`;
+        }
+
+        const register = await fundacionModel.create({
+            userName,
+            email,
+            password,
+            logo: logoUrl,
+            titulo,
+            horario,
+            direccion,
+            telefono,
+            sitioWeb,
+            mapaBoton,
+            mapa,
+            descripcion,
+            tituloEtiquetas
+        });
+
+        res.send({ "register success": register });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+module.exports = { getFundaciones, getFundacionesPorEtiqueta, getFundacion, updateFundacion, deleteFundacion, loginFundacion, registerFundacion }
 
