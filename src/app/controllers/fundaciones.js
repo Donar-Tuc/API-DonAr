@@ -28,7 +28,6 @@ const getFundacionesPorEtiqueta = async (req, res, next) => {
 const getFundacion = async (req, res, next) => {
     try {
         const id = req.params.id;
-        console.log("Find by id: ", id);
         const findOne = await fundacionModel.findById(id);
         res.send({ document: findOne });
     }
@@ -95,7 +94,6 @@ const updateFundacion = async (req, res, next) => {
 const deleteFundacion = async (req, res, next) => {
     try {
         const id = req.params.id;
-        console.log("Delete by id: ", id);
         const deleteOne = await fundacionModel.findByIdAndDelete(id);
         res.send({ deleted: deleteOne });
 
@@ -126,7 +124,10 @@ const loginFundacion = async (req, res, next) => {
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_PASSWORD, { expiresIn: "1h" });
 
-        res.send({ token: token });
+        res.send({ 
+            token: token,
+            userId: user._id
+         });
     } 
     catch (error) 
     {
