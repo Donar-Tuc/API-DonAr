@@ -41,7 +41,7 @@ const updateFundacion = async (req, res, next) => {
         const id = req.params.id;
         const userId = req.user.userId;
 
-        if(id != userId) {
+        if (id != userId) {
             return res.status(400).send({ message: "User credentials don't match" });
         }
 
@@ -50,7 +50,6 @@ const updateFundacion = async (req, res, next) => {
         const {
             userName,
             email,
-            password,
             titulo,
             horario,
             direccion,
@@ -69,7 +68,6 @@ const updateFundacion = async (req, res, next) => {
         const updateOne = await fundacionModel.findByIdAndUpdate(id, {
             userName,
             email,
-            password,
             logo: logoUrl,
             titulo,
             horario,
@@ -91,46 +89,29 @@ const updateFundacion = async (req, res, next) => {
 
 
 
-const deleteFundacion = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        const deleteOne = await fundacionModel.findByIdAndDelete(id);
-        res.send({ deleted: deleteOne });
-
-    }
-    catch (error) {
-        next(error);
-    }
-
-}
-
 const loginFundacion = async (req, res, next) => {
-    try 
-    {
+    try {
         const { email, password } = req.body;
-
-        if(!email || !password)
-        {
+        
+        if (!email || !password) {
             res.status(400).send({ message: "Please provide email and password to proceed." });
         }
 
         const user = await fundacionModel.findOne({ email: email });
         const passwordMatch = await bcrypt.compare(password, user.password)
-
-        if(!user || !passwordMatch)
-        {
+        
+        if (!user || !passwordMatch) {
             res.status(400).send({ message: "Please provide valid credentials." });
         }
-
+        
         const token = jwt.sign({ userId: user._id }, process.env.JWT_PASSWORD, { expiresIn: "1h" });
-
-        res.send({ 
+        
+        res.send({
             token: token,
             userId: user._id
-         });
-    } 
-    catch (error) 
-    {
+        });
+    }
+    catch (error) {
         next(error);
     }
 };
@@ -152,11 +133,11 @@ const registerFundacion = async (req, res, next) => {
             descripcion,
             tituloEtiquetas,
         } = req.body;
-
+        
         if (req.file) {
             logoUrl = `/upload/file/${req.file.id}`;
         }
-
+        
         const register = await fundacionModel.create({
             userName,
             email,
@@ -172,13 +153,77 @@ const registerFundacion = async (req, res, next) => {
             descripcion,
             tituloEtiquetas
         });
-
+        
         res.send({ "register success": register });
-
+        
     } catch (error) {
         next(error);
     }
 }
 
-module.exports = { getFundaciones, getFundacionesPorEtiqueta, getFundacion, updateFundacion, deleteFundacion, loginFundacion, registerFundacion }
+const changePasswordFundacion = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const userId = req.user.userId;
+        
+        if (id != userId) {
+            return res.status(400).send({ message: "User credentials don't match" });
+        }
+        
+        const { password: oldPassword, newPassword } = req.body;
+        
+        const user = await fundacionModel.findById(userId);
+        const passwordMatch = await bcrypt.compare(oldPassword, user.password)
+
+        if (!passwordMatch) {
+            res.status(400).send({ message: "Old password is incorrect." });
+        }
+        const passwordChanged = await fundacionModel.findByIdAndUpdate(id, 
+            { password: newPassword },
+            { new: true }
+        );
+        
+        if(passwordChanged) {
+            res.send({ message: 'Your password has been updated successfully.' })
+        } else {
+            res.status(500).send({ message: "Error al intentar cambiar la contraseña" })
+        }
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
+
+
+const deleteFundacion = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const userId = req.user.userId;
+        
+        if (id != userId) {
+            return res.status(400).send({ message: "User credentials don't match" });
+        }
+
+        const { password } = req.body;
+        
+        const user = await fundacionModel.findById(userId);
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
+            res.status(400).send({ message: "Password is incorrect." });
+        }
+        
+        const deleteOne = await fundacionModel.findByIdAndDelete(id);
+
+        res.send({ deleted: deleteOne });
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
+
+
+module.exports = { getFundaciones, getFundacionesPorEtiqueta, getFundacion, updateFundacion, deleteFundacion, loginFundacion, registerFundacion, changePasswordFundacion }
 
