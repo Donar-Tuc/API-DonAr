@@ -98,9 +98,14 @@ const loginFundacion = async (req, res, next) => {
         }
 
         const user = await fundacionModel.findOne({ email: email });
+
+        if (!user) {
+            res.status(400).send({ message: "Please provide valid credentials." });
+        }        
+
         const passwordMatch = await bcrypt.compare(password, user.password)
         
-        if (!user || !passwordMatch) {
+        if (!passwordMatch) {
             res.status(400).send({ message: "Please provide valid credentials." });
         }
         
