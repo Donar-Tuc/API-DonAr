@@ -7,10 +7,10 @@ router.get("/", getEventos);
 
 router.get("/:id", getEvento);
 
-router.post("/", createEvento);
+router.post("/", authUser, createEvento);
 
 router.put("/:id", authUser, updateEvento);
 
-router.delete("/:id", authUser, deleteEvento);
+router.delete("/:id/delete-event", authUser, deleteEvento);
 
 module.exports = router;

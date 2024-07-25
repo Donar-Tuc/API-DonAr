@@ -59,8 +59,10 @@ const uploadFileToGridFS = (req, res, next) => {
     if (!req.file) {
         return next()
     }
+
     const uploadStream = bucket.openUploadStream(`${Date.now()}${path.extname(req.file.originalname)}`);
     uploadStream.end(req.file.buffer);
+    
     uploadStream.on('finish', () => {
         req.file.id = uploadStream.id;
         next();

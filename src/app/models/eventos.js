@@ -7,9 +7,6 @@ const eventosSchema = new mongoose.Schema({
     ubicacion: String,
     fundacionOrganizadora: { type: mongoose.Schema.Types.ObjectId, ref: 'Fundacion' },
     tipoDeEvento: String,
-    numeroFundacionesAsociadas: Number,
-    cantidadEventosDifundidos: Number,
-    transaccionesMercadoPago: [{ type: mongoose.Schema.Types.ObjectId, ref: 'TransaccionMercadoPago' }]
 },
 {
     timestamps: true,

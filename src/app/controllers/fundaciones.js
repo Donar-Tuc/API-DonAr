@@ -2,9 +2,17 @@ const fundacionModel = require("../models/fundaciones");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+const isAdminFunction = (user) => {
+    return user.admin;
+}
+
 const getFundaciones = async (req, res, next) => {
     try {
-        const listAll = await fundacionModel.find({})
+        const listAll = await fundacionModel.find({
+            $or: [
+                { admin: { $exists: false } },
+                { admin: false }
+            ]})
         res.send({ list: listAll });
     }
     catch (error) {
@@ -17,7 +25,11 @@ const getFundacionesPorEtiqueta = async (req, res, next) => {
         const etiqueta = req.query.etiqueta;
 
         const fundaciones = await fundacionModel.find({
-            tituloEtiquetas: { $in: etiqueta }
+            tituloEtiquetas: { $in: etiqueta },
+            $or: [
+                { admin: { $exists: false } },
+                { admin: false }
+            ]
         });
         res.send({ list: fundaciones });
     } catch (error) {
@@ -40,8 +52,10 @@ const updateFundacion = async (req, res, next) => {
     try {
         const id = req.params.id;
         const userId = req.user.userId;
-
-        if (id != userId) {
+        const user = await fundacionModel.findById(userId);
+        const isAdmin = isAdminFunction(user);
+        
+        if (id != userId && !isAdmin) {
             return res.status(400).send({ message: "User credentials don't match" });
         }
 
@@ -137,8 +151,9 @@ const registerFundacion = async (req, res, next) => {
             mapa,
             descripcion,
             tituloEtiquetas,
+            admin
         } = req.body;
-        
+
         if (req.file) {
             logoUrl = `/upload/file/${req.file.id}`;
         }
@@ -156,7 +171,8 @@ const registerFundacion = async (req, res, next) => {
             mapaBoton,
             mapa,
             descripcion,
-            tituloEtiquetas
+            tituloEtiquetas,
+            admin
         });
         
         res.send({ "register success": register });
@@ -170,14 +186,16 @@ const changePasswordFundacion = async (req, res, next) => {
     try {
         const id = req.params.id;
         const userId = req.user.userId;
+
+        const user = await fundacionModel.findById(userId);
+        const isAdmin = isAdminFunction(user);
         
-        if (id != userId) {
+        if (id != userId && !isAdmin) {
             return res.status(400).send({ message: "User credentials don't match" });
         }
         
         const { password: oldPassword, newPassword } = req.body;
         
-        const user = await fundacionModel.findById(userId);
         const passwordMatch = await bcrypt.compare(oldPassword, user.password)
 
         if (!passwordMatch) {
@@ -200,20 +218,22 @@ const changePasswordFundacion = async (req, res, next) => {
 }
 
 
-
 const deleteFundacion = async (req, res, next) => {
     try {
         const id = req.params.id;
         const userId = req.user.userId;
+
+        const user = await fundacionModel.findById(userId);
+        const isAdmin = isAdminFunction(user);
+
         
-        if (id != userId) {
+        if (id != userId && !isAdmin) {
             return res.status(400).send({ message: "User credentials don't match" });
         }
 
         const { password } = req.body;
         
-        const user = await fundacionModel.findById(userId);
-        const passwordMatch = await bcrypt.compare(password, user.password);
+        const passwordMatch = isAdmin ? true : await bcrypt.compare(password, user.password);
 
         if (!passwordMatch) {
             res.status(400).send({ message: "Password is incorrect." });
