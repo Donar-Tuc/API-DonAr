@@ -1,30 +1,29 @@
-const estadisticasModel = require("../models/estadisticas");
-const fundacionModel = require("../models/fundaciones");
-const eventoModel = require("../models/eventos");
+const Estadisticas = require("../models/estadisticas");
+const Fundaciones = require("../models/fundaciones");
+const Eventos = require("../models/eventos");
 
 const getEstadisticas = async (req, res, next) => {
-    try 
-    {
-        const numeroDeFundacionesAsociadas = await fundacionModel.countDocuments();
-        const cantidadDeEventosDifundidos = await eventoModel.countDocuments();
+    try {
+        const numeroDeFundacionesAsociadas = await Fundaciones.countDocuments();
+        const cantidadDeEventosDifundidos = await Eventos.countDocuments();
 
-        let estadisticas = await estadisticasModel.findOne();
+        let estadisticas = await Estadisticas.findOne();
         
-        if(!estadisticas)
-        {
-            await estadisticasModel.create()
+        if (!estadisticas) {
+            estadisticas = await Estadisticas.create({
+                numeroDeFundacionesAsociadas,
+                cantidadDeEventosDifundidos,
+                transaccionesRealizadasPorMercadoPago: 0,
+            });
+        } else {
+            estadisticas.numeroDeFundacionesAsociadas = numeroDeFundacionesAsociadas;
+            estadisticas.cantidadDeEventosDifundidos = cantidadDeEventosDifundidos;
+            await estadisticas.save();
         }
 
-        estadisticas = await estadisticasModel.findOneAndUpdate({}, {
-            numeroDeFundacionesAsociadas,
-            cantidadDeEventosDifundidos, 
-        }, { new: true });
+        res.send({ estadisticas });
 
-        res.send({ estadisticas: estadisticas });
-
-    } 
-    catch (error) 
-    {
+    } catch (error) {
         next(error);
     }
 };
