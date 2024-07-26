@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 
 const eventosSchema = new mongoose.Schema({
     titulo: String,
+    fechaInicio: Date,
+    fechaFin: Date, // Considerando que quieras almacenar fecha y hora juntas
     descripcion: String,
-    fechaHora: Date, // Considerando que quieras almacenar fecha y hora juntas
-    ubicacion: String,
+    tituloEtiquetas: [String],
     fundacionOrganizadora: { type: mongoose.Schema.Types.ObjectId, ref: 'Fundacion' },
-    tipoDeEvento: String,
 },
 {
     timestamps: true,

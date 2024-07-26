@@ -49,17 +49,17 @@ const createEvento = async (req, res, next) => {
         const { 
             titulo, 
             descripcion, 
-            fechaHora, 
-            ubicacion, 
-            tipoDeEvento, 
+            fechaInicio, 
+            fechaFin, 
+            tituloEtiquetas
         } = req.body; 
         
         const createOne = await Eventos.create({ 
             titulo, 
             descripcion, 
-            fechaHora, 
-            ubicacion, 
-            tipoDeEvento, 
+            fechaInicio, 
+            fechaFin, 
+            tituloEtiquetas,
             fundacionOrganizadora: fundacionOrganizadora._id
         });
 
@@ -91,17 +91,17 @@ const updateEvento = async (req, res, next) => {
         const { 
             titulo, 
             descripcion, 
-            fechaHora, 
-            ubicacion, 
-            tipoDeEvento, 
+            fechaInicio, 
+            fechaFin, 
+            tituloEtiquetas
         } = req.body;
 
         const updateOne = await Eventos.findByIdAndUpdate(eventoId, { 
             titulo, 
             descripcion, 
-            fechaHora,
-            ubicacion, 
-            tipoDeEvento, 
+            fechaInicio, 
+            fechaFin, 
+            tituloEtiquetas
         }, { new: true });
 
         res.send({ updated: updateOne });
