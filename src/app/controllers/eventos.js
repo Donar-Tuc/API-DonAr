@@ -45,7 +45,7 @@ const createEvento = async (req, res, next) => {
                 fundacionOrganizadora = user;
         }
 
-        
+        let logoUrl;
         const { 
             titulo, 
             descripcion, 
@@ -53,8 +53,13 @@ const createEvento = async (req, res, next) => {
             fechaFin, 
             tituloEtiquetas
         } = req.body; 
+
+        if (req.file) {
+            logoUrl = `/upload/file/${req.file.id}`;
+        }
         
-        const createOne = await Eventos.create({ 
+        const createOne = await Eventos.create({
+            logo: logoUrl, 
             titulo, 
             descripcion, 
             fechaInicio, 
@@ -88,6 +93,7 @@ const updateEvento = async (req, res, next) => {
             return res.status(400).send({ message: "User credentials don't match" });
         }
 
+        let logoUrl;
         const { 
             titulo, 
             descripcion, 
@@ -96,7 +102,12 @@ const updateEvento = async (req, res, next) => {
             tituloEtiquetas
         } = req.body;
 
-        const updateOne = await Eventos.findByIdAndUpdate(eventoId, { 
+        if (req.file) {
+            logoUrl = `/upload/file/${req.file.id}`;
+        }
+
+        const updateOne = await Eventos.findByIdAndUpdate(eventoId, {
+            logo: logoUrl, 
             titulo, 
             descripcion, 
             fechaInicio, 

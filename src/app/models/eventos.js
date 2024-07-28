@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const eventosSchema = new mongoose.Schema({
+    logo: String,
     titulo: String,
     fechaInicio: Date,
     fechaFin: Date, // Considerando que quieras almacenar fecha y hora juntas
