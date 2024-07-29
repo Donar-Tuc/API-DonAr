@@ -1,6 +1,6 @@
 const express  = require("express");
 const router = express.Router();
-const { getEventos, getEvento, createEvento, updateEvento, deleteEvento } = require("../controllers/eventos");
+const { getEventos, getEvento, createEvento, updateEvento, deleteEvento, getFundacionEventos } = require("../controllers/eventos");
 const { authUser } = require("../middleware/authUser");
 const { upload, uploadFileToGridFS } = require("../middleware/upload");
 
@@ -8,6 +8,8 @@ const { upload, uploadFileToGridFS } = require("../middleware/upload");
 router.get("/", getEventos);
 
 router.get("/:id", getEvento);
+
+router.get("/fundacion/:id", getFundacionEventos);
 
 router.post("/", authUser, upload.single("logo"), uploadFileToGridFS, createEvento);
 

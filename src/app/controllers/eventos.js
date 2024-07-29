@@ -24,6 +24,21 @@ const getEvento = async (req, res, next) => {
     }
 };
 
+const getFundacionEventos = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const eventos = await Eventos.find({ fundacionOrganizadora: userId });
+
+        if (!eventos) {
+            return res.status(404).send({ message: "No events found for this organization." });
+        }
+
+        res.status(200).send({ list: eventos });
+    } catch (error) {
+        next(error);
+    }
+};
+
 const createEvento = async (req, res, next) => {
     try {
         const userId = req.user.userId;
@@ -147,4 +162,4 @@ const deleteEvento = async (req, res, next) => {
     }
 };
 
-module.exports = { getEventos, getEvento, createEvento, updateEvento, deleteEvento };
+module.exports = { getEventos, getEvento, getFundacionEventos, createEvento, updateEvento, deleteEvento };

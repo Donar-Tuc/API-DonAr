@@ -20,7 +20,7 @@ const fundacionesSchema = new mongoose.Schema({
     userName: {
         type: String,
         unique: true,
-        require: true
+        required: true
     },
     email: {
         type: String,
@@ -29,7 +29,7 @@ const fundacionesSchema = new mongoose.Schema({
     }, 
     password: {
         type: String,
-        required: true
+        required: true,
     },
     admin: {
         type: Boolean,

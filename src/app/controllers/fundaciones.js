@@ -108,32 +108,36 @@ const loginFundacion = async (req, res, next) => {
         const { email, password } = req.body;
         
         if (!email || !password) {
-            res.status(400).send({ message: "Please provide email and password to proceed." });
+            return res.status(400).send({ message: "Please provide email and password to proceed." });
         }
 
-        const user = await fundacionModel.findOne({ email: email });
+        const fundacion = await fundacionModel.findOne({ email: email });
 
-        if (!user) {
-            res.status(400).send({ message: "Please provide valid credentials." });
-        }        
+        if (!fundacion) {
+            console.log("Fundación no encontrada con el email:", email);
+            return res.status(400).send({ message: "Please provide valid credentials." });
+        }
 
-        const passwordMatch = await bcrypt.compare(password, user.password)
-        
+        console.log("Fundación encontrada:", fundacion);
+
+        const passwordMatch = await bcrypt.compare(password, fundacion.password);
+        console.log("Comparación de contraseña:", passwordMatch);
+
         if (!passwordMatch) {
-            res.status(400).send({ message: "Please provide valid credentials." });
+            return res.status(400).send({ message: "Please provide valid credentials." });
         }
-        
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_PASSWORD, { expiresIn: "1h" });
+
+        const token = jwt.sign({ userId: fundacion._id }, process.env.JWT_PASSWORD, { expiresIn: "1h" });
         
         res.send({
             token: token,
-            userId: user._id
+            userId: fundacion._id
         });
-    }
-    catch (error) {
+    } catch (error) {
         next(error);
     }
 };
+
 
 const registerFundacion = async (req, res, next) => {
     try {
