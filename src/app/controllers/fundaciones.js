@@ -63,7 +63,6 @@ const updateFundacion = async (req, res, next) => {
         let logoUrl;
         const {
             userName,
-            email,
             titulo,
             horario,
             direccion,
@@ -81,7 +80,6 @@ const updateFundacion = async (req, res, next) => {
 
         const updateOne = await fundacionModel.findByIdAndUpdate(id, {
             userName,
-            email,
             logo: logoUrl,
             titulo,
             horario,
@@ -186,7 +184,7 @@ const registerFundacion = async (req, res, next) => {
     }
 }
 
-const changePasswordFundacion = async (req, res, next) => {
+const updateAccountFundacion = async (req, res, next) => {
     try {
         const id = req.params.id;
         const userId = req.user.userId;
@@ -198,22 +196,24 @@ const changePasswordFundacion = async (req, res, next) => {
             return res.status(400).send({ message: "User credentials don't match" });
         }
         
-        const { password: oldPassword, newPassword } = req.body;
+        const { password: oldPassword, newPassword, email } = req.body;
         
         const passwordMatch = await bcrypt.compare(oldPassword, user.password)
 
         if (!passwordMatch) {
-            res.status(400).send({ message: "Old password is incorrect." });
+            res.status(400).send({ message: "User password is incorrect." });
         }
         const passwordChanged = await fundacionModel.findByIdAndUpdate(id, 
-            { password: newPassword },
+            { password: newPassword,
+                email: email
+            },
             { new: true }
         );
         
         if(passwordChanged) {
-            res.send({ message: 'Your password has been updated successfully.' })
+            res.send({ message: 'Your account has been updated successfully.' })
         } else {
-            res.status(500).send({ message: "Error al intentar cambiar la contraseña" })
+            res.status(500).send({ message: "Error while trying to change user's credentials." })
         }
     }
     catch (error) {
@@ -254,5 +254,5 @@ const deleteFundacion = async (req, res, next) => {
 
 
 
-module.exports = { getFundaciones, getFundacionesPorEtiqueta, getFundacion, updateFundacion, deleteFundacion, loginFundacion, registerFundacion, changePasswordFundacion }
+module.exports = { getFundaciones, getFundacionesPorEtiqueta, getFundacion, updateFundacion, deleteFundacion, loginFundacion, registerFundacion, updateAccountFundacion }
 
