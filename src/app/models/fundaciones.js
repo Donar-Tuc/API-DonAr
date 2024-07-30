@@ -2,6 +2,17 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+const etiquetasPermitidas = [
+    "Donaciones monetarias",
+    "Alimentos no perecederos",
+    "Asistencia y voluntariados",
+    "Vestimenta",
+    "Juguetes",
+    "Medicamentos",
+    "Útiles escolares",
+    "Elementos del hogar"
+];
+
 const fundacionesSchema = new mongoose.Schema({
     logo: String,
     titulo: String,
@@ -12,7 +23,25 @@ const fundacionesSchema = new mongoose.Schema({
     mapaBoton: String,
     mapa: String,
     descripcion: String,
-    tituloEtiquetas: [String],
+    tituloEtiquetas: {
+        type: [String],
+        validate: [
+            {
+                validator: function(array) {
+                    // Usar un Set para verificar valores únicos
+                    return new Set(array).size === array.length;
+                },
+                message: props => `${props.value} contiene valores duplicados`
+            },
+            {
+                validator: function(array) {
+                    // Verificar que todos los valores estén en la lista de etiquetasPermitidas
+                    return array.every(value => etiquetasPermitidas.includes(value));
+                },
+                message: props => `${props.value} contiene un valor no permitido`
+            }
+        ]
+    },
     //password: {
     //    type: String,
     //    required: true
