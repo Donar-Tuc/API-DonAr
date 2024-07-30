@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const etiquetasPermitidas = [
@@ -42,10 +41,14 @@ const fundacionesSchema = new mongoose.Schema({
             }
         ]
     },
-    //password: {
-    //    type: String,
-    //    required: true
-    //},
+    aliasMercadoPago: {
+        type: String,
+        required: function() {
+            // Hacer que aliasMercadoPago sea obligatorio si "Donaciones monetarias" está en tituloEtiquetas
+            return this.tituloEtiquetas.includes("Donaciones monetarias");
+        },
+        message: "Alias ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present"
+    },
     userName: {
         type: String,
         unique: true,
@@ -70,26 +73,22 @@ const fundacionesSchema = new mongoose.Schema({
     versionKey: false
 });
 
-//Encriptar password antes de crear
+// Encriptar password antes de crear
 fundacionesSchema.pre("save", async function (next) {
-
     const fundacion = this;
 
     if (!fundacion.isModified('password')) return next();
 
-    try
-    {
+    try {
         const hashedPassword = await bcrypt.hash(fundacion.password, 10);
         fundacion.password = hashedPassword;
         next();
-    }
-    catch(error)
-    {
+    } catch(error) {
         next(error);
     }
-})
+});
 
-//Encriptar password antes de actualizar
+// Encriptar password antes de actualizar
 fundacionesSchema.pre('findOneAndUpdate', async function (next) {
     const fundacion = this.getUpdate();
     
@@ -105,8 +104,6 @@ fundacionesSchema.pre('findOneAndUpdate', async function (next) {
         next();
     }
 });
-
-
 
 const Fundaciones = mongoose.model('Fundaciones', fundacionesSchema, "Fundaciones");
 
