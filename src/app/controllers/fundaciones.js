@@ -70,11 +70,10 @@ const updateFundacion = async (req, res, next) => {
         if (id != userId && !isAdmin) {
             return res.status(400).send({ message: "User credentials don't match" });
         }
-
+        
 
         let logoUrl;
         const {
-            userName,
             titulo,
             horario,
             direccion,
@@ -84,35 +83,22 @@ const updateFundacion = async (req, res, next) => {
             mapa,
             descripcion,
             aliasMercadoPago,
+            latitud,
+            longitud,
             tituloEtiquetas,
         } = req.body;
 
-        const existingUser = await fundacionModel.findOne({
-            $or: [
-                { userName: userName },
-                { email: email }
-            ]
-        });
+        const ubicacion = { latitud, longitud }
 
-        if (existingUser) {
-            if (existingUser.userName === userName) {
-                return res.status(400).send({ message: "UserName already exists." });
+        if (tituloEtiquetas) {
+            const etiquetasArray = Array.isArray(tituloEtiquetas) ? tituloEtiquetas : [tituloEtiquetas];
+            
+            if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
+                return res.status(400).send({ message: "One or more tags are not allowed" });
             }
-            if (existingUser.email === email) {
-                return res.status(400).send({ message: "Email already exists." });
+            if (etiquetasArray.includes("Donaciones monetarias") && !aliasMercadoPago && !user.aliasMercadoPago) {
+                return res.status(400).send({ message: "Alias ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
             }
-        }
-
-        if (!tituloEtiquetas) {
-            return res.status(400).send({ message: "Tags needed." });
-        }
-        const etiquetasArray = Array.isArray(tituloEtiquetas) ? tituloEtiquetas : [tituloEtiquetas];
-
-        if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
-            return res.status(400).send({ message: "One or more tags are not allowed" });
-        }
-        if (etiquetasArray.includes("Donaciones monetarias") && !aliasMercadoPago) {
-            return res.status(400).send({ message: "Alias ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
         }
 
         if (req.file) {
@@ -120,7 +106,6 @@ const updateFundacion = async (req, res, next) => {
         }
 
         const updateOne = await fundacionModel.findByIdAndUpdate(id, {
-            userName,
             logo: logoUrl,
             titulo,
             horario,
@@ -131,6 +116,7 @@ const updateFundacion = async (req, res, next) => {
             mapa,
             descripcion,
             aliasMercadoPago,
+            ubicacion,
             tituloEtiquetas
         }, { new: true });
 
@@ -187,9 +173,11 @@ const registerFundacion = async (req, res, next) => {
     try {
         let logoUrl;
         const {
-            userName,
             email,
             password,
+
+            admin,
+
             titulo,
             horario,
             direccion,
@@ -199,21 +187,15 @@ const registerFundacion = async (req, res, next) => {
             mapa,
             descripcion,
             aliasMercadoPago,
+            latitud,
+            longitud,
             tituloEtiquetas,
-            admin
         } = req.body;
 
-        const existingUser = await fundacionModel.findOne({
-            $or: [
-                { userName: userName },
-                { email: email }
-            ]
-        });
-
+        
+        const existingUser = await fundacionModel.findOne({ email: email });
+        
         if (existingUser) {
-            if (existingUser.userName === userName) {
-                return res.status(400).send({ message: "UserName already exists." });
-            }
             if (existingUser.email === email) {
                 return res.status(400).send({ message: "Email already exists." });
             }
@@ -223,23 +205,31 @@ const registerFundacion = async (req, res, next) => {
             return res.status(400).send({ message: "Tags needed." });
         }
         const etiquetasArray = Array.isArray(tituloEtiquetas) ? tituloEtiquetas : [tituloEtiquetas];
-
+        
         if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
             return res.status(400).send({ message: "One or more tags are not allowed" });
         }
-
+        
         if (etiquetasArray.includes("Donaciones monetarias") && !aliasMercadoPago) {
             return res.status(400).send({ message: "Alias ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
         }
-
+        
+        if(!latitud || !longitud)
+        {
+            res.status(400).send({ message: "Ubicacion is required" })
+        }
+        const ubicacion = { latitud, longitud }
+        
         if (req.file) {
             logoUrl = `/upload/file/${req.file.id}`;
         }
 
         const register = await fundacionModel.create({
-            userName,
             email,
             password,
+
+            admin,
+
             logo: logoUrl,
             titulo,
             horario,
@@ -250,8 +240,8 @@ const registerFundacion = async (req, res, next) => {
             mapa,
             descripcion,
             aliasMercadoPago,
-            tituloEtiquetas,
-            admin
+            ubicacion,
+            tituloEtiquetas
         });
 
         res.send({ "register success": register });
@@ -327,7 +317,11 @@ const deleteFundacion = async (req, res, next) => {
 
         const deleteOne = await fundacionModel.findByIdAndDelete(id);
 
-        res.send({ deleted: deleteOne });
+        if (deleteOne) {
+            res.send({ deleted: deleteOne });
+        } else {
+            res.status(404).send({ message: "Fundacion not found." });
+        }
     }
     catch (error) {
         next(error);

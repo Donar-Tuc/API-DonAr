@@ -49,10 +49,15 @@ const fundacionesSchema = new mongoose.Schema({
         },
         message: "Alias ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present"
     },
-    userName: {
-        type: String,
-        unique: true,
-        required: true
+    ubicacion: {
+        latitud: {
+            required: true,
+            type: Number
+        },
+        longitud: {
+            required: true,
+            type: Number
+        }
     },
     email: {
         type: String,
