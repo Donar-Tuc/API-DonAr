@@ -87,11 +87,9 @@ const updateFundacion = async (req, res, next) => {
             tituloEtiquetas,
         } = req.body;
 
-        const ubicacion = { latitud, longitud }
+        const ubicacion = { latitud, longitud };
 
         if (tituloEtiquetas) {
-            console.log(tituloEtiquetas);
-            // Convertir la cadena de etiquetas en un array de etiquetas
             const etiquetasArray = Array.isArray(tituloEtiquetas) 
                 ? tituloEtiquetas 
                 : tituloEtiquetas.split(',').map(tag => tag.trim());
@@ -121,7 +119,7 @@ const updateFundacion = async (req, res, next) => {
             descripcion,
             aliasMercadoPago,
             ubicacion,
-            tituloEtiquetas: etiquetasArray
+            tituloEtiquetas: etiquetasArray // Asegúrate de que se guarde como array
         }, { new: true });
 
         res.send({ updated: updateOne });
@@ -134,6 +132,7 @@ const updateFundacion = async (req, res, next) => {
         next(error);
     }
 }
+
 
 
 
