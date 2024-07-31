@@ -121,7 +121,7 @@ const updateFundacion = async (req, res, next) => {
             descripcion,
             aliasMercadoPago,
             ubicacion,
-            tituloEtiquetas
+            tituloEtiquetas: etiquetasArray
         }, { new: true });
 
         res.send({ updated: updateOne });
