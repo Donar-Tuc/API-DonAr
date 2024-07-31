@@ -71,7 +71,6 @@ const updateFundacion = async (req, res, next) => {
             return res.status(400).send({ message: "User credentials don't match" });
         }
         
-
         let logoUrl;
         const {
             titulo,
@@ -92,6 +91,7 @@ const updateFundacion = async (req, res, next) => {
 
         if (tituloEtiquetas) {
             const etiquetasArray = Array.isArray(tituloEtiquetas) ? tituloEtiquetas : [tituloEtiquetas];
+            console.log("Etiquetas recibidas:", etiquetasArray); // Log de etiquetas recibidas
             
             if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
                 return res.status(400).send({ message: "One or more tags are not allowed" });
