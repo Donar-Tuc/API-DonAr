@@ -90,7 +90,11 @@ const updateFundacion = async (req, res, next) => {
         const ubicacion = { latitud, longitud }
 
         if (tituloEtiquetas) {
-            const etiquetasArray = Array.isArray(tituloEtiquetas) ? tituloEtiquetas : [tituloEtiquetas];
+            console.log(tituloEtiquetas);
+            // Convertir la cadena de etiquetas en un array de etiquetas
+            const etiquetasArray = Array.isArray(tituloEtiquetas) 
+                ? tituloEtiquetas 
+                : tituloEtiquetas.split(',').map(tag => tag.trim());
             console.log("Etiquetas recibidas:", etiquetasArray); // Log de etiquetas recibidas
             
             if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
