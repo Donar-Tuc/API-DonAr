@@ -70,8 +70,10 @@ const updateFundacion = async (req, res, next) => {
         if (id != userId && !isAdmin) {
             return res.status(400).send({ message: "User credentials don't match" });
         }
-        
+
         let logoUrl;
+        let etiquetasArray = []; // Definir etiquetasArray aquí
+        
         const {
             titulo,
             horario,
@@ -90,7 +92,7 @@ const updateFundacion = async (req, res, next) => {
         const ubicacion = { latitud, longitud };
 
         if (tituloEtiquetas) {
-            const etiquetasArray = Array.isArray(tituloEtiquetas) 
+            etiquetasArray = Array.isArray(tituloEtiquetas) 
                 ? tituloEtiquetas 
                 : tituloEtiquetas.split(',').map(tag => tag.trim());
             console.log("Etiquetas recibidas:", etiquetasArray); // Log de etiquetas recibidas
@@ -99,7 +101,7 @@ const updateFundacion = async (req, res, next) => {
                 return res.status(400).send({ message: "One or more tags are not allowed" });
             }
             if (etiquetasArray.includes("Donaciones monetarias") && !aliasMercadoPago && !user.aliasMercadoPago) {
-                return res.status(400).send({ message: "Alias ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
+                return res.status(400).send({ message: "Alias Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
             }
         }
 
