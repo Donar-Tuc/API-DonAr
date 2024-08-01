@@ -89,8 +89,6 @@ const updateFundacion = async (req, res, next) => {
             tituloEtiquetas,
         } = req.body;
 
-        const ubicacion = { latitud, longitud };
-
         if (tituloEtiquetas) {
             etiquetasArray = Array.isArray(tituloEtiquetas) 
                 ? tituloEtiquetas 
@@ -120,8 +118,9 @@ const updateFundacion = async (req, res, next) => {
             mapa,
             descripcion,
             linkMercadoPago,
-            ubicacion,
-            tituloEtiquetas: etiquetasArray // Asegúrate de que se guarde como array
+            latitud,
+            longitud,
+            tituloEtiquetas: etiquetasArray 
         }, { new: true });
 
         res.send({ updated: updateOne });
@@ -219,12 +218,6 @@ const registerFundacion = async (req, res, next) => {
             return res.status(400).send({ message: "Link ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
         }
         
-        if(!latitud || !longitud)
-        {
-            res.status(400).send({ message: "Ubicacion is required" })
-        }
-        const ubicacion = { latitud, longitud }
-        
         if (req.file) {
             logoUrl = `/upload/file/${req.file.id}`;
         }
@@ -245,7 +238,8 @@ const registerFundacion = async (req, res, next) => {
             mapa,
             descripcion,
             linkMercadoPago,
-            ubicacion,
+            latitud,
+            longitud,
             tituloEtiquetas
         });
 

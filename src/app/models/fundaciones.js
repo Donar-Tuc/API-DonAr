@@ -26,14 +26,14 @@ const fundacionesSchema = new mongoose.Schema({
         type: [String],
         validate: [
             {
-                validator: function(array) {
+                validator: function (array) {
                     // Usar un Set para verificar valores únicos
                     return new Set(array).size === array.length;
                 },
                 message: props => `${props.value} contiene valores duplicados`
             },
             {
-                validator: function(array) {
+                validator: function (array) {
                     // Verificar que todos los valores estén en la lista de etiquetasPermitidas
                     return array.every(value => etiquetasPermitidas.includes(value));
                 },
@@ -43,26 +43,22 @@ const fundacionesSchema = new mongoose.Schema({
     },
     linkMercadoPago: {
         type: String,
-        required: function() {
+        required: function () {
             return this.tituloEtiquetas.includes("Donaciones monetarias");
         },
         message: "Link ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present"
     },
-    ubicacion: {
-        latitud: {
-            required: true,
-            type: Number
-        },
-        longitud: {
-            required: true,
-            type: Number
-        }
+    latitud: {
+        type: Number
+    },
+    longitud: {
+        type: Number
     },
     email: {
         type: String,
         unique: true,
         required: true
-    }, 
+    },
     password: {
         type: String,
         required: true,
@@ -72,10 +68,10 @@ const fundacionesSchema = new mongoose.Schema({
         default: false
     }
 },
-{
-    timestamps: true,
-    versionKey: false
-});
+    {
+        timestamps: true,
+        versionKey: false
+    });
 
 // Encriptar password antes de crear
 fundacionesSchema.pre("save", async function (next) {
@@ -87,7 +83,7 @@ fundacionesSchema.pre("save", async function (next) {
         const hashedPassword = await bcrypt.hash(fundacion.password, 10);
         fundacion.password = hashedPassword;
         next();
-    } catch(error) {
+    } catch (error) {
         next(error);
     }
 });
@@ -95,7 +91,7 @@ fundacionesSchema.pre("save", async function (next) {
 // Encriptar password antes de actualizar
 fundacionesSchema.pre('findOneAndUpdate', async function (next) {
     const fundacion = this.getUpdate();
-    
+
     if (fundacion.password) {
         try {
             const hashedPassword = await bcrypt.hash(fundacion.password, 10);
