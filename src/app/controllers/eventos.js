@@ -67,8 +67,16 @@ const createEvento = async (req, res, next) => {
             fechaInicio, 
             fechaFin, 
             tituloEtiquetas
-        } = req.body; 
-
+        } = req.body;
+        
+        if (!tituloEtiquetas) {
+            return res.status(400).send({ message: "Tags needed." });
+        }
+        const etiquetasArray = Array.isArray(tituloEtiquetas) ? tituloEtiquetas : [tituloEtiquetas];
+        
+        if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
+            return res.status(400).send({ message: "One or more tags are not allowed" });
+        }
         if (req.file) {
             logoUrl = `/upload/file/${req.file.id}`;
         }
@@ -79,7 +87,7 @@ const createEvento = async (req, res, next) => {
             descripcion, 
             fechaInicio, 
             fechaFin, 
-            tituloEtiquetas,
+            tituloEtiquetas: etiquetasArray,
             fundacionOrganizadora: fundacionOrganizadora._id
         });
 
@@ -117,6 +125,17 @@ const updateEvento = async (req, res, next) => {
             tituloEtiquetas
         } = req.body;
 
+        if (tituloEtiquetas) {
+            etiquetasArray = Array.isArray(tituloEtiquetas) 
+                ? tituloEtiquetas 
+                : tituloEtiquetas.split(',').map(tag => tag.trim());
+            console.log("Etiquetas recibidas:", etiquetasArray); // Log de etiquetas recibidas
+            
+            if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
+                return res.status(400).send({ message: "One or more tags are not allowed" });
+            }
+        }
+
         if (req.file) {
             logoUrl = `/upload/file/${req.file.id}`;
         }
@@ -127,7 +146,7 @@ const updateEvento = async (req, res, next) => {
             descripcion, 
             fechaInicio, 
             fechaFin, 
-            tituloEtiquetas
+            tituloEtiquetas: etiquetasArray
         }, { new: true });
 
         res.send({ updated: updateOne });
