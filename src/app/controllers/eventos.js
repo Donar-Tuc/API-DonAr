@@ -57,6 +57,7 @@ const createEvento = async (req, res, next) => {
         const isAdmin = isAdminFunction(user);
 
         let fundacionOrganizadora;
+        let etiquetasArray = [];
 
         if (req.body.idFundacion && isAdmin) {
             fundacionOrganizadora = await Fundaciones.findById(req.body.idFundacion);
@@ -81,20 +82,26 @@ const createEvento = async (req, res, next) => {
         } = req.body;
         
 
-        if (!tituloEtiquetas) {
-            return res.status(400).send({ message: "Tags needed." });
-        }
-        const etiquetasArray = Array.isArray(tituloEtiquetas) ? tituloEtiquetas : [tituloEtiquetas];
+        if (tituloEtiquetas) {
+            etiquetasArray = Array.isArray(tituloEtiquetas) 
+                ? tituloEtiquetas 
+                : tituloEtiquetas.split(',').map(tag => tag.trim());
+            console.log("Etiquetas array:", etiquetasArray); // Log de etiquetas recibidas
+            console.log("Titulo etiquetas", tituloEtiquetas);
+            
 
-        console.log(tituloEtiquetas);
-        console.log(etiquetasArray);
-        
-        if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
-            return res.status(400).send({ message: "One or more tags are not allowed" });
+            if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
+                return res.status(400).send({ message: "One or more tags are not allowed" });
+            }
+            if (etiquetasArray.includes("Donaciones monetarias") && !linkMercadoPago && !user.linkMercadoPago) {
+                return res.status(400).send({ message: "Link Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
+            }
         }
+
         if (req.file) {
             logoUrl = `/upload/file/${req.file.id}`;
         }
+
         
         const createOne = await Eventos.create({
             logo: logoUrl, 
