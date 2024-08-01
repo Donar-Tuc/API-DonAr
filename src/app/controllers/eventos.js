@@ -80,10 +80,14 @@ const createEvento = async (req, res, next) => {
             tituloEtiquetas
         } = req.body;
         
+
         if (!tituloEtiquetas) {
             return res.status(400).send({ message: "Tags needed." });
         }
         const etiquetasArray = Array.isArray(tituloEtiquetas) ? tituloEtiquetas : [tituloEtiquetas];
+
+        console.log(tituloEtiquetas);
+        console.log(etiquetasArray);
         
         if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
             return res.status(400).send({ message: "One or more tags are not allowed" });
