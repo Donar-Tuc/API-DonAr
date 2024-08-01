@@ -5,6 +5,17 @@ const isAdminFunction = (user) => {
     return user.admin;
 }
 
+const etiquetasPermitidas = [
+    "Donaciones monetarias",
+    "Alimentos no perecederos",
+    "Asistencia y voluntariados",
+    "Vestimenta",
+    "Juguetes",
+    "Medicamentos",
+    "Útiles escolares",
+    "Elementos del hogar"
+];
+
 const getEventos = async (req, res, next) => {
     try {
         const listAll = await Eventos.find({});
