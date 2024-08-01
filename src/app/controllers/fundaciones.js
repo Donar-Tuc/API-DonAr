@@ -83,7 +83,7 @@ const updateFundacion = async (req, res, next) => {
             mapaBoton,
             mapa,
             descripcion,
-            aliasMercadoPago,
+            linkMercadoPago,
             latitud,
             longitud,
             tituloEtiquetas,
@@ -100,8 +100,8 @@ const updateFundacion = async (req, res, next) => {
             if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
                 return res.status(400).send({ message: "One or more tags are not allowed" });
             }
-            if (etiquetasArray.includes("Donaciones monetarias") && !aliasMercadoPago && !user.aliasMercadoPago) {
-                return res.status(400).send({ message: "Alias Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
+            if (etiquetasArray.includes("Donaciones monetarias") && !linkMercadoPago && !user.linkMercadoPago) {
+                return res.status(400).send({ message: "Link Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
             }
         }
 
@@ -119,7 +119,7 @@ const updateFundacion = async (req, res, next) => {
             mapaBoton,
             mapa,
             descripcion,
-            aliasMercadoPago,
+            linkMercadoPago,
             ubicacion,
             tituloEtiquetas: etiquetasArray // Asegúrate de que se guarde como array
         }, { new: true });
@@ -191,7 +191,7 @@ const registerFundacion = async (req, res, next) => {
             mapaBoton,
             mapa,
             descripcion,
-            aliasMercadoPago,
+            linkMercadoPago,
             latitud,
             longitud,
             tituloEtiquetas,
@@ -215,8 +215,8 @@ const registerFundacion = async (req, res, next) => {
             return res.status(400).send({ message: "One or more tags are not allowed" });
         }
         
-        if (etiquetasArray.includes("Donaciones monetarias") && !aliasMercadoPago) {
-            return res.status(400).send({ message: "Alias ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
+        if (etiquetasArray.includes("Donaciones monetarias") && !linkMercadoPago) {
+            return res.status(400).send({ message: "Link ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
         }
         
         if(!latitud || !longitud)
@@ -244,7 +244,7 @@ const registerFundacion = async (req, res, next) => {
             mapaBoton,
             mapa,
             descripcion,
-            aliasMercadoPago,
+            linkMercadoPago,
             ubicacion,
             tituloEtiquetas
         });

@@ -41,13 +41,12 @@ const fundacionesSchema = new mongoose.Schema({
             }
         ]
     },
-    aliasMercadoPago: {
+    linkMercadoPago: {
         type: String,
         required: function() {
-            // Hacer que aliasMercadoPago sea obligatorio si "Donaciones monetarias" está en tituloEtiquetas
             return this.tituloEtiquetas.includes("Donaciones monetarias");
         },
-        message: "Alias ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present"
+        message: "Link ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present"
     },
     ubicacion: {
         latitud: {
