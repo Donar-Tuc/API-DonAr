@@ -41,7 +41,7 @@ const getFundacionEventos = async (req, res, next) => {
         const eventos = await Eventos.find({ fundacionOrganizadora: userId });
 
         if (!eventos) {
-            return res.status(404).send({ message: "No events found for this organization." });
+            return res.status(404).send({ message: "No se encontraron eventos para esta organización" });
         }
 
         res.status(200).send({ list: eventos });
@@ -62,11 +62,11 @@ const createEvento = async (req, res, next) => {
             fundacionOrganizadora = await Fundaciones.findById(req.body.idFundacion);
             
             if (!fundacionOrganizadora) {
-                return res.status(404).send({ message: "fundacionOrganizadora not found" });
+                return res.status(404).send({ message: "No se encontró fundacionOrganizadora" });
             }
         } else if (!req.body.idFundacion && isAdmin) {
             
-            return res.status(400).send({ message: "Provide an idFundacion" });
+            return res.status(400).send({ message: "No se recibió idFundacion" });
         } else {
             fundacionOrganizadora = user;
         }
@@ -93,10 +93,10 @@ const createEvento = async (req, res, next) => {
 
 
             if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
-                return res.status(400).send({ message: "One or more tags are not allowed" });
+                return res.status(400).send({ message: "No se permiten una o más etiquetas" });
             }
             if (etiquetasArray.includes("Donaciones monetarias") && !linkMercadoPago && !user.linkMercadoPago) {
-                return res.status(400).send({ message: "Please, add a Mercado Pago link to your account before creating a 'Donaciones Monetarias' event" });
+                return res.status(400).send({ message: "Por favor añada un link de Mercado Pago a su cuenta antes de crear un evento con 'Donaciones Monetarias'" });
             }
             linkMercadoPago = user.linkMercadoPago;
         }
@@ -133,13 +133,13 @@ const updateEvento = async (req, res, next) => {
         const isAdmin = isAdminFunction(user);
 
         if (!evento) {
-            return res.status(400).send({ message: "Event not found" })
+            return res.status(400).send({ message: "No se encontró el evento" })
         }
 
         const { fundacionOrganizadora: fundacionOrganizadoraId } = evento;
 
         if (fundacionOrganizadoraId.toString() !== userId && !isAdmin) {
-            return res.status(400).send({ message: "User credentials don't match" });
+            return res.status(400).send({ message: "Las credenciales del usuario no concuerdan" });
         }
 
         let logoUrl;
@@ -161,10 +161,10 @@ const updateEvento = async (req, res, next) => {
             console.log("Etiquetas recibidas:", etiquetasArray); // Log de etiquetas recibidas
 
             if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
-                return res.status(400).send({ message: "One or more tags are not allowed" });
+                return res.status(400).send({ message: "No se permiten una o más etiquetas" });
             }
             if (etiquetasArray.includes("Donaciones monetarias") && !linkMercadoPago && !user.linkMercadoPago) {
-                return res.status(400).send({ message: "Please, add a Mercado Pago link to your account before creating a 'Donaciones Monetarias' event" });
+                return res.status(400).send({ message: "Por favor añada un link de Mercado Pago a su cuenta antes de crear un evento con 'Donaciones Monetarias'" });
             }
             linkMercadoPago = user.linkMercadoPago;
         }
@@ -200,12 +200,12 @@ const deleteEvento = async (req, res, next) => {
         const evento = await Eventos.findById(eventoId);
 
         if (!evento) {
-            return res.status(400).send({ message: "Event not found" })
+            return res.status(400).send({ message: "No se encontró el evento" })
         }
         const { fundacionOrganizadora: fundacionOrganizadoraId } = evento;
 
         if (fundacionOrganizadoraId.toString() !== userId && !isAdmin) {
-            return res.status(400).send({ message: "User credentials don't match" });
+            return res.status(400).send({ message: "Las credenciales del usuario no concuerdan" });
         }
 
         const deleteOne = await Eventos.findByIdAndDelete(eventoId);

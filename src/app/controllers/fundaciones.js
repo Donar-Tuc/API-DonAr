@@ -68,7 +68,7 @@ const updateFundacion = async (req, res, next) => {
         const isAdmin = isAdminFunction(user);
 
         if (id != userId && !isAdmin) {
-            return res.status(400).send({ message: "User credentials don't match" });
+            return res.status(400).send({ message: "Las credenciales del usuario no concuerdan" });
         }
 
         let logoUrl;
@@ -96,10 +96,10 @@ const updateFundacion = async (req, res, next) => {
             console.log("Etiquetas recibidas:", etiquetasArray); // Log de etiquetas recibidas
             
             if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
-                return res.status(400).send({ message: "One or more tags are not allowed" });
+                return res.status(400).send({ message: "No se permiten una o más etiquetas" });
             }
             if (etiquetasArray.includes("Donaciones monetarias") && !linkMercadoPago && !user.linkMercadoPago) {
-                return res.status(400).send({ message: "Link Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
+                return res.status(400).send({ message: "Por favor añada un link de Mercado Pago a su cuenta antes de crear un evento con 'Donaciones Monetarias'" });
             }
         }
 
@@ -128,7 +128,7 @@ const updateFundacion = async (req, res, next) => {
     } catch (error) {
         if (error.code === 11000) {
             const field = Object.keys(error.keyPattern)[0];
-            return res.status(400).send({ message: `Duplicate value for ${field}` });
+            return res.status(400).send({ message: `Valor duplicado en: ${field}` });
         }
         next(error);
     }
@@ -142,14 +142,14 @@ const loginFundacion = async (req, res, next) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).send({ message: "Please provide email and password to proceed." });
+            return res.status(400).send({ message: "Por favor envíe mail y contraseña válidos para continuar" });
         }
 
         const fundacion = await fundacionModel.findOne({ email: email });
 
         if (!fundacion) {
             console.log("Fundación no encontrada con el email:", email);
-            return res.status(400).send({ message: "Please provide valid credentials." });
+            return res.status(400).send({ message: "Las credenciales del usuario no concuerdan" });
         }
 
         console.log("Fundación encontrada:", fundacion);
@@ -158,7 +158,7 @@ const loginFundacion = async (req, res, next) => {
         console.log("Comparación de contraseña:", passwordMatch);
 
         if (!passwordMatch) {
-            return res.status(400).send({ message: "Please provide valid credentials." });
+            return res.status(400).send({ message: "Las credenciales del usuario no concuerdan" });
         }
 
         const token = jwt.sign({ userId: fundacion._id }, process.env.JWT_PASSWORD, { expiresIn: "1h" });
@@ -201,21 +201,21 @@ const registerFundacion = async (req, res, next) => {
         
         if (existingUser) {
             if (existingUser.email === email) {
-                return res.status(400).send({ message: "Email already exists." });
+                return res.status(400).send({ message: "Este email ya existe" });
             }
         }
 
         if (!tituloEtiquetas) {
-            return res.status(400).send({ message: "Tags needed." });
+            return res.status(400).send({ message: "Se necesitan etiquetas" });
         }
         const etiquetasArray = Array.isArray(tituloEtiquetas) ? tituloEtiquetas : [tituloEtiquetas];
         
         if (!etiquetasArray.every(tag => etiquetasPermitidas.includes(tag))) {
-            return res.status(400).send({ message: "One or more tags are not allowed" });
+            return res.status(400).send({ message: "No se permiten una o más etiquetas" });
         }
         
         if (etiquetasArray.includes("Donaciones monetarias") && !linkMercadoPago) {
-            return res.status(400).send({ message: "Link ​​Mercado Pago is mandatory when the 'Donaciones monetarias' tag is present" });
+            return res.status(400).send({ message: "Por favor añada un link de Mercado Pago a su cuenta antes de crear un evento con 'Donaciones Monetarias'" });
         }
         
         if (req.file) {
@@ -248,7 +248,7 @@ const registerFundacion = async (req, res, next) => {
     } catch (error) {
         if (error.code === 11000) {
             const field = Object.keys(error.keyPattern)[0]; // Obtén el campo que causó el error
-            return res.status(400).send({ message: `Duplicate value for ${field}` });
+            return res.status(400).send({ message: `Valor duplicado en: ${field}` });
         }
         next(error);
     }
@@ -263,7 +263,7 @@ const updateAccountFundacion = async (req, res, next) => {
         const isAdmin = isAdminFunction(user);
 
         if (id != userId && !isAdmin) {
-            return res.status(400).send({ message: "User credentials don't match" });
+            return res.status(400).send({ message: "Las credenciales del usuario no concuerdan" });
         }
 
         const { password: oldPassword, newPassword, email } = req.body;
@@ -271,7 +271,7 @@ const updateAccountFundacion = async (req, res, next) => {
         const passwordMatch = await bcrypt.compare(oldPassword, user.password)
 
         if (!passwordMatch) {
-            res.status(400).send({ message: "User password is incorrect." });
+            res.status(400).send({ message: "La contraseña del usuario es incorrecta." });
         }
         const passwordChanged = await fundacionModel.findByIdAndUpdate(id,
             {
@@ -282,9 +282,9 @@ const updateAccountFundacion = async (req, res, next) => {
         );
 
         if (passwordChanged) {
-            res.send({ message: 'Your account has been updated successfully.' })
+            res.send({ message: 'Su cuenta se ha actualizado' })
         } else {
-            res.status(500).send({ message: "Error while trying to change user's credentials." })
+            res.status(500).send({ message: "Ocurrío un error al intentar cambiar las credenciales del usuario" })
         }
     }
     catch (error) {
@@ -303,7 +303,7 @@ const deleteFundacion = async (req, res, next) => {
 
 
         if (id != userId && !isAdmin) {
-            return res.status(400).send({ message: "User credentials don't match" });
+            return res.status(400).send({ message: "Las credenciales del usuario no concuerdan" });
         }
 
         const { password } = req.body;
@@ -311,7 +311,7 @@ const deleteFundacion = async (req, res, next) => {
         const passwordMatch = isAdmin ? true : await bcrypt.compare(password, user.password);
 
         if (!passwordMatch) {
-            res.status(400).send({ message: "Password is incorrect." });
+            res.status(400).send({ message: "La contraseña del usuario es incorrecta." });
         }
 
         const deleteOne = await fundacionModel.findByIdAndDelete(id);
@@ -319,7 +319,7 @@ const deleteFundacion = async (req, res, next) => {
         if (deleteOne) {
             res.send({ deleted: deleteOne });
         } else {
-            res.status(404).send({ message: "Fundacion not found." });
+            res.status(404).send({ message: "No se encontró la fundación" });
         }
     }
     catch (error) {
